@@ -20,10 +20,10 @@ public class HelperDB extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         //CREATE TABLE(_id INTEGER PRIMARY KEY AUTO INCREMENT,
         // name TEXT NOT NULL, breed TEXT, gender INTEGER NOT NULL, weight INTEGER NOT NULL DEFAULT 0
-        String SQl_CREATE_TABLES = "CREATE TABLE" + PetEntry.TABLE_NAME + "(" + PetEntry._ID +
-                "INTEGER PRIMARY KEY AUTO INCREMENT" + PetEntry.COLUMN_PET_NAME + "TEXT NOT NULL"
-                + PetEntry.COLUMN_PET_BREED + "TEXT" + PetEntry.COLUMN_PET_GENDER + "INTEGER NOT NULL"
-                + PetEntry.COLUMN_PET_WEIGHT + "INTEGER NOT NULL DEFAULT 0";
+        String SQl_CREATE_TABLES = "CREATE TABLE " + PetEntry.TABLE_NAME + "(" + PetEntry._ID +
+                " INTEGER PRIMARY KEY AUTOINCREMENT, " + PetEntry.COLUMN_PET_NAME + " TEXT NOT NULL, "
+                + PetEntry.COLUMN_PET_BREED + " TEXT, " + PetEntry.COLUMN_PET_GENDER + " INTEGER NOT NULL, "
+                + PetEntry.COLUMN_PET_WEIGHT + " INTEGER NOT NULL DEFAULT 0);" ;
 
         db.execSQL(SQl_CREATE_TABLES);
     }

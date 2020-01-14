@@ -8,10 +8,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.example.petsdb.data.HelperDB;
 import com.example.petsdb.data.PetsContract;
 
@@ -41,12 +43,11 @@ public class MainActivity extends AppCompatActivity {
     public void displayDataBaseInfo(){
         HelperDB mHelperDB = new HelperDB(this);
         SQLiteDatabase sqLiteDatabase = mHelperDB.getReadableDatabase();
-        //String[] tb = PetsContract.PetEntry.TABLE_NAME.split("");
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM", PetsContract.PetEntry.TABLE_NAME, null);
-
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + PetsContract.PetEntry.TABLE_NAME, null);
         try{
             TextView display = findViewById(R.id.text_view_pet);
-            display.setText("Number of rows in pets table" + cursor.getCount());
+            String count = "Number of rows in pets table: " + cursor.getCount();
+            display.setText(count);
         } finally {
             cursor.close();
         }
