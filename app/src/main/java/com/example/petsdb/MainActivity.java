@@ -44,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
         displayDataBaseInfo();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        displayDataBaseInfo();
+    }
+
     public void displayDataBaseInfo(){
         HelperDB mHelperDB = new HelperDB(this);
         SQLiteDatabase sqLiteDatabase = mHelperDB.getReadableDatabase();
@@ -58,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void insertPets(){
+    private void insertPets(){
         SQLiteDatabase db = mHelperDb.getReadableDatabase();
 
         ContentValues values = new ContentValues();
