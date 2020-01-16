@@ -19,7 +19,6 @@ import com.example.petsdb.data.HelperDB;
 import com.example.petsdb.data.PetsContract;
 
 public class MainActivity extends AppCompatActivity {
-    private Toolbar mToolBar;
     private HelperDB mHelperDb;
 
     @Override
@@ -27,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mToolBar = findViewById(R.id.toolbar);
+        Toolbar mToolBar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolBar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -53,8 +52,13 @@ public class MainActivity extends AppCompatActivity {
     public void displayDataBaseInfo(){
         HelperDB mHelperDB = new HelperDB(this);
         SQLiteDatabase sqLiteDatabase = mHelperDB.getReadableDatabase();
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " +
-                PetsContract.PetEntry.TABLE_NAME, null);
+        String[] projection = {PetsContract.PetEntry.COLUMN_PET_BREED, PetsContract.PetEntry.COLUMN_PET_WEIGHT,
+                PetsContract.PetEntry.COLUMN_PET_GENDER,
+                PetsContract.PetEntry.COLUMN_PET_NAME};
+        //String selection = PetsContract.PetEntry._ID + "= ?";
+        //String[] SelectionArgs = new String[] { PetsContract.PetEntry.GENDER_FEMALE };
+        Cursor cursor = sqLiteDatabase.query(PetsContract.PetEntry.TABLE_NAME, projection, null,
+                null, null, null, null);
         try{
             TextView display = findViewById(R.id.text_view_pet);
             String count = "Number of rows in pets table: " + cursor.getCount();
@@ -73,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         values.put(PetsContract.PetEntry.COLUMN_PET_GENDER, PetsContract.PetEntry.GENDER_MALE);
         values.put(PetsContract.PetEntry.COLUMN_PET_WEIGHT, 20);
 
-        long newRow = db.insert(PetsContract.PetEntry.TABLE_NAME, null, values);
+        db.insert(PetsContract.PetEntry.TABLE_NAME, null, values);
     }
 
     @Override
