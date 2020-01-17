@@ -51,18 +51,35 @@ public class MainActivity extends AppCompatActivity {
 
     public void displayDataBaseInfo(){
         HelperDB mHelperDB = new HelperDB(this);
-        SQLiteDatabase sqLiteDatabase = mHelperDB.getReadableDatabase();
-        String[] projection = {PetsContract.PetEntry.COLUMN_PET_BREED, PetsContract.PetEntry.COLUMN_PET_WEIGHT,
-                PetsContract.PetEntry.COLUMN_PET_GENDER,
-                PetsContract.PetEntry.COLUMN_PET_NAME};
+        SQLiteDatabase sqLiteDatabase = mHelperDB.getWritableDatabase();
+        String[] projection = {PetsContract.PetEntry._ID, PetsContract.PetEntry.COLUMN_PET_NAME,
+                PetsContract.PetEntry.COLUMN_PET_BREED, PetsContract.PetEntry.COLUMN_PET_WEIGHT};
         //String selection = PetsContract.PetEntry._ID + "= ?";
         //String[] SelectionArgs = new String[] { PetsContract.PetEntry.GENDER_FEMALE };
         Cursor cursor = sqLiteDatabase.query(PetsContract.PetEntry.TABLE_NAME, projection, null,
                 null, null, null, null);
+        TextView display = findViewById(R.id.text_view_pet);
         try{
-            TextView display = findViewById(R.id.text_view_pet);
-            String count = "Number of rows in pets table: " + cursor.getCount();
+            String count = "Number of rows in pets table: " + cursor.getCount() + " pets. \n\n";
             display.setText(count);
+            display.append(PetsContract.PetEntry._ID + "-" +
+                    PetsContract.PetEntry.COLUMN_PET_NAME + "-"
+                    + PetsContract.PetEntry.COLUMN_PET_BREED + "-"
+                    + PetsContract.PetEntry.COLUMN_PET_WEIGHT + "\n");
+
+            int idColumnIndex = cursor.getColumnIndex(PetsContract.PetEntry._ID);
+            int nameColumnIndex = cursor.getColumnIndex(PetsContract.PetEntry.COLUMN_PET_NAME);
+            int breedColumnIndex = cursor.getColumnIndex(PetsContract.PetEntry.COLUMN_PET_BREED);
+            int weightColumnIndex = cursor.getColumnIndex(PetsContract.PetEntry.COLUMN_PET_WEIGHT);
+
+            while (cursor.moveToNext()){
+                int currentId = cursor.getInt(idColumnIndex);
+                String currentName = cursor.getString(nameColumnIndex);
+                String currentBreed = cursor.getString(breedColumnIndex);
+                String currentWeight = cursor.getString(weightColumnIndex);
+
+                display.append("\n" + currentId + " - " + currentName + " - " + currentBreed + " - " + currentWeight);
+            }
         } finally {
             cursor.close();
         }
