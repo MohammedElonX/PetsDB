@@ -6,10 +6,12 @@ import android.database.Cursor;
 import android.net.Uri;
 
 public class PetProvider extends ContentProvider {
+    private HelperDB mHelperDB;
 
     @Override
     public boolean onCreate() {
-        return false;
+        mHelperDB = new HelperDB(getContext());
+        return true;
     }
 
     @Override
