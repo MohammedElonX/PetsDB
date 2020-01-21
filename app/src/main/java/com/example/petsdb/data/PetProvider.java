@@ -2,11 +2,28 @@ package com.example.petsdb.data;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 public class PetProvider extends ContentProvider {
+    //URI matcher for table
+    private static final int PETS = 100;
+    //URI matcher for specific pet in table
+    private static final int PETS_ID = 101;
+
     private HelperDB mHelperDB;
+
+    private static final UriMatcher sUriMAtcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+    //Static initializer, this is run the first time anything is called form this class
+    static{
+        sUriMAtcher.addURI(PetsContract.CONTENT_AUTHORITY, PetsContract.PATH_PET, PETS);
+
+        sUriMAtcher.addURI(PetsContract.CONTENT_AUTHORITY, PetsContract.PATH_PET + "/#", PETS);
+
+    }
 
     @Override
     public boolean onCreate() {
@@ -16,7 +33,22 @@ public class PetProvider extends ContentProvider {
 
     @Override
     public Cursor query( Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        return null;
+        SQLiteDatabase sqLiteDatabase = mHelperDB.getReadableDatabase();
+
+        //This cursor will hold the result of the query
+        Cursor cursor;
+
+        //Figure out if the URI matcher can match the URI to a specific URI
+        int match = sUriMAtcher.match(uri);
+        switch (match){
+            case PETS:
+                cursor = sqLiteDatabase.query(PetsContract.PetEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+                default:
+                    throw new IllegalArgumentException("cannot query " + uri);
+        }
+       return cursor;
     }
 
     @Override

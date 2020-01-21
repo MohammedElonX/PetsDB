@@ -3,6 +3,9 @@ package com.example.petsdb.data;
 import android.provider.BaseColumns;
 
 public final class PetsContract {
+    public static final String CONTENT_AUTHORITY = "com.example.petsdb";
+    public static final String PATH_PET = "com.example.petsdb/pets";
+
     private PetsContract(){}
 
     public static final class PetEntry implements BaseColumns {
