@@ -1,6 +1,7 @@
 package com.example.petsdb.data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -45,7 +46,13 @@ public class PetProvider extends ContentProvider {
                 cursor = sqLiteDatabase.query(PetsContract.PetEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
                 break;
-                default:
+            case PETS_ID:
+               selection = PetsContract.PetEntry._ID + "=?";
+               selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+               cursor = sqLiteDatabase.query(PetsContract.PetEntry.TABLE_NAME, projection, selection, selectionArgs,
+                       null, null, sortOrder);
+               break;
+               default:
                     throw new IllegalArgumentException("cannot query " + uri);
         }
        return cursor;
