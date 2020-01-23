@@ -1,1 +1,1 @@
-include ':app', ':petsdb2'
+include ':app', ':petsdb', ':app2'

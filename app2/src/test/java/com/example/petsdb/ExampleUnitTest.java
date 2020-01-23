@@ -1,4 +1,4 @@
-package com.example.petsdb2;
+package com.example.petsdb;
 
 import org.junit.Test;
 

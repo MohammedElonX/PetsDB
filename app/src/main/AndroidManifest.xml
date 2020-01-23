@@ -11,8 +11,8 @@
             android:theme="@style/AppTheme">
 
         <provider
-                android:name = ".data.PetProvider"
-                android:authorities = "com.example.petsdb.data.PetProvider"
+                android:name = "com.example.petsdb.data.PetProvider"
+                android:authorities = "com.example.petsdb"
                 android:exported = "false"/>
 
         <activity

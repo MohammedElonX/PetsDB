@@ -51,13 +51,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void displayDataBaseInfo(){
         HelperDB mHelperDB = new HelperDB(this);
-        SQLiteDatabase sqLiteDatabase = mHelperDB.getWritableDatabase();
+
         String[] projection = {PetsContract.PetEntry._ID, PetsContract.PetEntry.COLUMN_PET_NAME,
                 PetsContract.PetEntry.COLUMN_PET_BREED, PetsContract.PetEntry.COLUMN_PET_WEIGHT};
-        //String selection = PetsContract.PetEntry._ID + "= ?";
-        //String[] SelectionArgs = new String[] { PetsContract.PetEntry.GENDER_FEMALE };
-        Cursor cursor = sqLiteDatabase.query(PetsContract.PetEntry.TABLE_NAME, projection, null,
-                null, null, null, null);
+
+        //Cursor cursor = sqLiteDatabase.query(PetsContract.PetEntry.TABLE_NAME, projection, null,
+        //        null, null, null, null);
+        //perform query on provider with content resolver
+        Cursor cursor = getContentResolver().query(PetsContract.PetEntry.CONTENT_URI, projection, null, null, null);
         TextView display = findViewById(R.id.text_view_pet);
         try{
             String count = "Number of rows in pets table: " + cursor.getCount() + " pets. \n\n";
