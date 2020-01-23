@@ -100,8 +100,7 @@ public class EditorActivity extends AppCompatActivity {
         values.put(PetEntry.COLUMN_PET_GENDER, gender);
         values.put(PetEntry.COLUMN_PET_WEIGHT, weight);
 
-        SQLiteDatabase db = mHelperDB.getReadableDatabase();
-        db.insert(PetEntry.TABLE_NAME, null, values);
+        getContentResolver().insert(PetEntry.CONTENT_URI, values);
     }
 
     @Override

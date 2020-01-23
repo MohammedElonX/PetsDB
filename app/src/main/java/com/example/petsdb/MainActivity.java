@@ -55,10 +55,8 @@ public class MainActivity extends AppCompatActivity {
         String[] projection = {PetsContract.PetEntry._ID, PetsContract.PetEntry.COLUMN_PET_NAME,
                 PetsContract.PetEntry.COLUMN_PET_BREED, PetsContract.PetEntry.COLUMN_PET_WEIGHT};
 
-        //Cursor cursor = sqLiteDatabase.query(PetsContract.PetEntry.TABLE_NAME, projection, null,
-        //        null, null, null, null);
-        //perform query on provider with content resolver
-        Cursor cursor = getContentResolver().query(PetsContract.PetEntry.CONTENT_URI, projection, null, null, null);
+        Cursor cursor = getContentResolver().query(PetsContract.PetEntry.CONTENT_URI, projection,
+                null, null, null);
         TextView display = findViewById(R.id.text_view_pet);
         try{
             String count = "Number of rows in pets table: " + cursor.getCount() + " pets. \n\n";
@@ -87,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void insertPets(){
-        SQLiteDatabase db = mHelperDb.getReadableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(PetsContract.PetEntry.COLUMN_PET_NAME, "Jack");
@@ -95,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         values.put(PetsContract.PetEntry.COLUMN_PET_GENDER, PetsContract.PetEntry.GENDER_MALE);
         values.put(PetsContract.PetEntry.COLUMN_PET_WEIGHT, 20);
 
-        db.insert(PetsContract.PetEntry.TABLE_NAME, null, values);
+        getContentResolver().insert(PetsContract.PetEntry.CONTENT_URI, values);
     }
 
     @Override

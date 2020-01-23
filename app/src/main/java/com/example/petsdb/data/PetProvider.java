@@ -65,7 +65,13 @@ public class PetProvider extends ContentProvider {
 
     @Override
     public Uri insert( Uri uri, ContentValues values) {
-        return null;
+        final int match = sUriMAtcher.match(uri);
+        switch(match){
+            case PETS:
+                return insertPet(uri, values);
+            default:
+                throw new IllegalArgumentException("Insertion error for " + uri);
+        }
     }
 
     @Override
@@ -76,5 +82,12 @@ public class PetProvider extends ContentProvider {
     @Override
     public int update( Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         return 0;
+    }
+
+    private Uri insertPet(Uri uri, ContentValues values) {
+        //ToDo: insert pet into db with given contentValues
+        SQLiteDatabase db = mHelperDB.getReadableDatabase();
+        db.insert(PetsContract.PetEntry.TABLE_NAME, null, values);
+        return ContentUris.withAppendedId(uri, 6);
     }
 }
