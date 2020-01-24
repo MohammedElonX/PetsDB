@@ -7,6 +7,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.widget.Toast;
 
 public class PetProvider extends ContentProvider {
     //URI matcher for table
@@ -55,6 +56,9 @@ public class PetProvider extends ContentProvider {
                default:
                     throw new IllegalArgumentException("cannot query " + uri);
         }
+        //set notification uri and updates with changes
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
        return cursor;
     }
 
@@ -76,18 +80,36 @@ public class PetProvider extends ContentProvider {
 
     @Override
     public int delete( Uri uri, String selection, String[] selectionArgs) {
+        getContext().getContentResolver().notifyChange(uri, null);
         return 0;
     }
 
     @Override
     public int update( Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        getContext().getContentResolver().notifyChange(uri, null);
         return 0;
     }
 
     private Uri insertPet(Uri uri, ContentValues values) {
-        //ToDo: insert pet into db with given contentValues
+        //Check that name is not null
+        String name = values.getAsString(PetsContract.PetEntry.COLUMN_PET_NAME);
+        if(name == null){
+            throw new IllegalArgumentException("Pet requires a name");
+        }
+
+        //Check if gender is valid
+        Integer weight = values.getAsInteger(PetsContract.PetEntry.COLUMN_PET_WEIGHT);
+        if(weight == null){
+            throw new IllegalArgumentException("Please add weight");
+        }
+
+        //Insert pet into db with given contentValues
         SQLiteDatabase db = mHelperDB.getReadableDatabase();
         db.insert(PetsContract.PetEntry.TABLE_NAME, null, values);
+
+        //Notify listeners of change in data
+        getContext().getContentResolver().notifyChange(uri, null);
+
         return ContentUris.withAppendedId(uri, 6);
     }
 }
