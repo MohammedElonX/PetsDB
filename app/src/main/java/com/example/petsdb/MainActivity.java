@@ -5,8 +5,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,8 +24,10 @@ import android.widget.Toast;
 import com.example.petsdb.data.HelperDB;
 import com.example.petsdb.data.PetsContract;
 
-public class MainActivity extends AppCompatActivity {
-    private HelperDB mHelperDb;
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final int PET_LOADER = 0;
+
+    PetCursorAdapter mCursorAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,32 +46,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mHelperDb = new HelperDB(this);
+        ListView petListView = findViewById(R.id.list);
 
-        displayDataBaseInfo();
+        View emptyView = findViewById(R.id.empty_view);
+        petListView.setEmptyView(emptyView);
+
+        mCursorAdapter = new PetCursorAdapter(this, null);
+        petListView.setAdapter(mCursorAdapter);
+
+        //Kicks off manager
+        getSupportLoaderManager().initLoader(PET_LOADER, null, this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        displayDataBaseInfo();
-    }
-
-    public void displayDataBaseInfo(){
-        HelperDB mHelperDB = new HelperDB(this);
-
-        String[] projection = {PetsContract.PetEntry._ID, PetsContract.PetEntry.COLUMN_PET_NAME,
-                PetsContract.PetEntry.COLUMN_PET_BREED, PetsContract.PetEntry.COLUMN_PET_WEIGHT};
-
-        //Perform query from ContextResolver with ContentProvider(PetProvider) methods
-        Cursor cursor = getContentResolver().query(PetsContract.PetEntry.CONTENT_URI, projection,
-                null, null, null);
-
-        ListView petListView = findViewById(R.id.list);
-
-        PetCursorAdapter adapter = new PetCursorAdapter(this, cursor);
-
-        petListView.setAdapter(adapter);
     }
 
     private void insertPets(){
@@ -93,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_insert_dummy_data:
                 // Do nothing for now
                 insertPets();
-                displayDataBaseInfo();
                 return true;
             // Respond to a click on the "Delete all entries" menu option
             case R.id.action_delete_all_entries:
@@ -102,5 +97,32 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, @Nullable Bundle bundle) {
+        //Define projection for columns from table
+        String[] projection = {
+                PetsContract.PetEntry._ID,
+                PetsContract.PetEntry.COLUMN_PET_NAME,
+                PetsContract.PetEntry.COLUMN_PET_BREED
+        };
+
+        //this Loader executes the ContentProvider query method on a backGround thread
+        return new CursorLoader(this, PetsContract.PetEntry.CONTENT_URI,
+                projection, null, null, null);
+    }
+//
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
+        //Update cursorAdapter with this new cursor
+        mCursorAdapter.swapCursor(cursor);
+    }
+//
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        //Callback called when the data needs to be deleted
+        mCursorAdapter.swapCursor(null);
     }
 }
