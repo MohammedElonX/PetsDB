@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.petsdb.data.HelperDB;
@@ -55,33 +56,15 @@ public class MainActivity extends AppCompatActivity {
         String[] projection = {PetsContract.PetEntry._ID, PetsContract.PetEntry.COLUMN_PET_NAME,
                 PetsContract.PetEntry.COLUMN_PET_BREED, PetsContract.PetEntry.COLUMN_PET_WEIGHT};
 
+        //Perform query from ContextResolver with ContentProvider(PetProvider) methods
         Cursor cursor = getContentResolver().query(PetsContract.PetEntry.CONTENT_URI, projection,
                 null, null, null);
-        TextView display = findViewById(R.id.text_view_pet);
-        try{
-            String count = "Number of rows in pets table: " + cursor.getCount() + " pets. \n\n";
-            display.setText(count);
-            display.append(PetsContract.PetEntry._ID + "-" +
-                    PetsContract.PetEntry.COLUMN_PET_NAME + "-"
-                    + PetsContract.PetEntry.COLUMN_PET_BREED + "-"
-                    + PetsContract.PetEntry.COLUMN_PET_WEIGHT + "\n");
 
-            int idColumnIndex = cursor.getColumnIndex(PetsContract.PetEntry._ID);
-            int nameColumnIndex = cursor.getColumnIndex(PetsContract.PetEntry.COLUMN_PET_NAME);
-            int breedColumnIndex = cursor.getColumnIndex(PetsContract.PetEntry.COLUMN_PET_BREED);
-            int weightColumnIndex = cursor.getColumnIndex(PetsContract.PetEntry.COLUMN_PET_WEIGHT);
+        ListView petListView = findViewById(R.id.list);
 
-            while (cursor.moveToNext()){
-                int currentId = cursor.getInt(idColumnIndex);
-                String currentName = cursor.getString(nameColumnIndex);
-                String currentBreed = cursor.getString(breedColumnIndex);
-                String currentWeight = cursor.getString(weightColumnIndex);
+        PetCursorAdapter adapter = new PetCursorAdapter(this, cursor);
 
-                display.append("\n" + currentId + " - " + currentName + " - " + currentBreed + " - " + currentWeight);
-            }
-        } finally {
-            cursor.close();
-        }
+        petListView.setAdapter(adapter);
     }
 
     private void insertPets(){
