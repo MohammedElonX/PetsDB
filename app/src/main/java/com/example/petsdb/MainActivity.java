@@ -1,9 +1,11 @@
 package com.example.petsdb;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,6 +56,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         mCursorAdapter = new PetCursorAdapter(this, null);
         petListView.setAdapter(mCursorAdapter);
+
+        //Set up onClickListener
+        petListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, EditorActivity.class);
+                //Forms content Uri for clicked pet
+               Uri currentPet = ContentUris.withAppendedId(PetsContract.PetEntry.CONTENT_URI, id);
+
+               //Set uri on data field of intent
+                intent.setData(currentPet);
+
+                //Launch to display data
+                startActivity(intent);
+
+            }
+        });
 
         //Kicks off manager
         getSupportLoaderManager().initLoader(PET_LOADER, null, this);
